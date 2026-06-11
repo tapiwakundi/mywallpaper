@@ -6,6 +6,17 @@
 import AppKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+
+        Task { @MainActor in
+            configureWindows()
+            WallpaperManager.shared.finishLaunching()
+            showMainWindow()
+        }
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard WallpaperManager.shared.isWallpaperActive else {
             return .terminateNow
@@ -24,5 +35,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return .terminateNow
         }
         return .terminateCancel
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !flag {
+            showMainWindow()
+        }
+        return true
+    }
+
+    @MainActor
+    private func configureWindows() {
+        for window in NSApp.windows where window.canBecomeMain {
+            window.titlebarAppearsTransparent = true
+            window.titleVisibility = .hidden
+            window.styleMask.insert(.fullSizeContentView)
+            window.isMovableByWindowBackground = true
+            window.backgroundColor = .black
+        }
+    }
+
+    @MainActor
+    private func showMainWindow() {
+        configureWindows()
+        for window in NSApp.windows where window.canBecomeMain {
+            window.makeKeyAndOrderFront(nil)
+            return
+        }
     }
 }

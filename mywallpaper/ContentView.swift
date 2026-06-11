@@ -8,11 +8,14 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         WallpaperGalleryView()
-            .frame(minWidth: 820, minHeight: 580)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.black)
+            .configureAppWindow()
     }
 }
 
 #Preview {
     ContentView()
         .environment(WallpaperManager.shared)
+        .frame(width: 980, height: 720)
 }

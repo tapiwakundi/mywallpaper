@@ -55,6 +55,13 @@ enum BuiltInWallpaperID: String, Codable, CaseIterable, Identifiable, Sendable {
         default: "Mixkit"
         }
     }
+
+    var category: String {
+        switch self {
+        case .aurora, .starfield: "SPACE"
+        case .ocean, .sunset, .waterfall: "NATURE"
+        }
+    }
 }
 
 struct CustomWallpaper: Identifiable, Codable, Equatable, Sendable {
@@ -68,7 +75,7 @@ struct CustomWallpaper: Identifiable, Codable, Equatable, Sendable {
     }
 }
 
-enum WallpaperItem: Equatable, Sendable {
+enum WallpaperItem: Equatable, Sendable, Identifiable {
     case builtIn(BuiltInWallpaperID)
     case custom(CustomWallpaper)
 
@@ -92,6 +99,15 @@ enum WallpaperItem: Equatable, Sendable {
             id.videoURL
         case .custom(let custom):
             custom.fileURL
+        }
+    }
+
+    var category: String {
+        switch self {
+        case .builtIn(let id):
+            id.category
+        case .custom:
+            "MY MEDIA"
         }
     }
 }

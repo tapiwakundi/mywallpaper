@@ -29,6 +29,9 @@ final class WallpaperManager {
         customWallpapers = store.loadWallpapers()
         launchAtLogin = (SMAppService.mainApp.status == .enabled)
         showOnLockScreen = UserDefaults.standard.object(forKey: lockScreenKey) as? Bool ?? true
+    }
+
+    func finishLaunching() {
         restoreSavedWallpaper()
     }
 
