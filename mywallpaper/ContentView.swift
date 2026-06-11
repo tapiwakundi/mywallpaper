@@ -2,23 +2,17 @@
 //  ContentView.swift
 //  mywallpaper
 //
-//  Created by Tapiwa Kundishora on 2026-06-10.
-//
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        WallpaperGalleryView()
+            .frame(minWidth: 820, minHeight: 580)
     }
 }
 
 #Preview {
     ContentView()
+        .environment(WallpaperManager.shared)
 }
