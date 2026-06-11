@@ -6,15 +6,18 @@
 import AppKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    var openMainWindowAction: (() -> Void)?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate(ignoringOtherApps: true)
+        NSApp.setActivationPolicy(.accessory)
 
         Task { @MainActor in
-            configureWindows()
             WallpaperManager.shared.finishLaunching()
-            showMainWindow()
         }
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -56,11 +59,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @MainActor
-    private func showMainWindow() {
+    func showMainWindow() {
+        NSApp.setActivationPolicy(.accessory)
+        NSApp.activate(ignoringOtherApps: true)
         configureWindows()
-        for window in NSApp.windows where window.canBecomeMain {
+
+        if let window = NSApp.windows.first(where: { $0.canBecomeMain }) {
             window.makeKeyAndOrderFront(nil)
             return
         }
+
+        openMainWindowAction?()
     }
 }
