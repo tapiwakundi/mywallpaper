@@ -6,8 +6,6 @@
 import AppKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    var openMainWindowAction: (() -> Void)?
-
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
@@ -42,33 +40,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if !flag {
-            showMainWindow()
+            Task { @MainActor in
+                MainWindowController.shared.show()
+            }
         }
         return true
-    }
-
-    @MainActor
-    private func configureWindows() {
-        for window in NSApp.windows where window.canBecomeMain {
-            window.titlebarAppearsTransparent = true
-            window.titleVisibility = .hidden
-            window.styleMask.insert(.fullSizeContentView)
-            window.isMovableByWindowBackground = true
-            window.backgroundColor = .black
-        }
-    }
-
-    @MainActor
-    func showMainWindow() {
-        NSApp.setActivationPolicy(.accessory)
-        NSApp.activate(ignoringOtherApps: true)
-        configureWindows()
-
-        if let window = NSApp.windows.first(where: { $0.canBecomeMain }) {
-            window.makeKeyAndOrderFront(nil)
-            return
-        }
-
-        openMainWindowAction?()
     }
 }
